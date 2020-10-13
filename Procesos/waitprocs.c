@@ -4,7 +4,7 @@ y en cada proceso ejecuta la funcion codigo_del_proceso. Esta funcion cuenta des
 0 hasta 49, imprimiendo tambien el id del proceso.
 Cuando todos los procesos hijos han acabado de ejecutar, imprime el codigo de 
 retorno de cada uno. Esta impresion algunas veces puede desincronizarse debido
-a que los distintos hilos intentan escribir a stdout al mismo tiempo.
+a que los distintos procesos hijos intentan escribir a stdout al mismo tiempo.
 */
 
 #include <stdio.h> // Biblioteca estandar para entrada y salida de datos
