@@ -1,3 +1,5 @@
-# ComputacionConcurrente
+# Computacion Concurrente
 
-Esta es una prueba
+## Integrantes
+
+* Adolfo Patricio Barrero Olguin
