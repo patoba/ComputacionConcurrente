@@ -4,3 +4,4 @@
 
 * Adolfo Patricio Barrero Olguin
 * Artemio Santiago Padilla Robles 
+* Rodolfo Figueroa Soriano
