@@ -24,7 +24,8 @@ int main(void){
             exit(1);  // Sal
 
     default: printf("Codigo del padre \n");   // Si el PID es del proceso padre
-             died = wait(&status);  // investigar el proposito de esta linea
+             died = wait(&status);  // wait toma por parámetro un puntero a un entero que contendrá el estado de salida de ese programa. 
+                                    //Devuelve el ID de proceso del hijo que terminó.
              printf("Termino el proceso hijo %d \n", died);  // imprimir el PID del proceso hijo que acabo
 
     }
