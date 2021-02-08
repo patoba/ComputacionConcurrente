@@ -41,12 +41,12 @@ class Layer:
         pass
 
 class NeuralNet:
-    def __init__(self, configuration_layers, activiation_functions, last_activation_funct = id):
+    def __init__(self, configuration_layers, activation_functions, last_activation_funct = id):
         """
         configuration_layers: list of the numbers of neurons in each layer. Must contain the number of features of the input vector.
         activation_functions: list of the activations functions of each layer. 
         """
-        self.layers = [Layer(conf_layer1, conf_layer2, ac_fun) for conf_layer1, conf_layer2, ac_fun in zip(configuration_layers, configuration_layers[1:], activiation_functions)]
+        self.layers = [Layer(conf_layer1, conf_layer2, ac_fun) for conf_layer1, conf_layer2, ac_fun in zip(configuration_layers, configuration_layers[1:], activation_functions)]
         self.f = last_activation_funct
         
     def __call__(self, x):
@@ -76,9 +76,9 @@ class NeuralNet:
 if __name__ == "__main__":
     sigmoide = lambda x : 1 / (1 + np.exp(-x)) 
     configuration_layers = [2, 6, 1]
-    activiation_functions = [sigmoide] * 2
-    last_activiation = lambda x : x[0] > 0.5
-    nn = NeuralNet(configuration_layers, activiation_functions, last_activiation)
+    activation_functions = [sigmoide] * 2
+    last_activation = lambda x : x[0] > 0.5
+    nn = NeuralNet(configuration_layers, activation_functions, last_activation)
     x = np.random.rand(configuration_layers[0])
     print(x)
     print(nn(x))
