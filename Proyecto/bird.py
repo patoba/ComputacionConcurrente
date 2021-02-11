@@ -1,3 +1,7 @@
+"""
+Este archivo implementa clases para simular el juego de Flappy Bird.
+"""
+
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle, Circle
 from itertools import islice
@@ -230,6 +234,32 @@ class Pipe:
         ax.scatter([self.x], [self.y])
         
 class World:
+    """
+    Clase que representa el mundo donde yacen los pájaros y las tuberías.
+
+    Parámetros
+    ----------
+    nets : list
+        Lista de objetos de tipo `NeuralNet` que asignar a cada pájaro.
+
+    settings : dict
+        Diccionario de configuración
+    
+    Atributos
+    ---------
+    birds : list
+        Lista de objetos `Bird` representando los pájaros en el mundo.
+
+    pipes : list
+        Lista de objetos `Pipe` representando las tuberías.
+
+    steps : int = 0
+        Cuántos pasos temporales se han dado. Al inicio es cero
+
+    alive : bool = True
+        Si el mundo está vivo (i.e., al menos un pájaro está vivo y no se ha
+        alcanzado el límite de pasos). Al inicio es Verdadero.
+    """
     def __init__(self, nets, settings):
         PIPE_WIDTH = settings['PIPE_WIDTH']
         RIGHT = settings['RIGHT']
@@ -241,6 +271,10 @@ class World:
         self.alive = True
         
     def check_collision(self):
+        """
+        Revisa si alguno de los pájaros chocó contra alguna de las tuberías, o
+        contra el piso. Matando a los pájaros correspondientes en caso afirmativo.
+        """
         BIRD_RADIUS = self.settings['BIRD_RADIUS']
         PIPE_WIDTH = self.settings['PIPE_WIDTH']
         PIPE_GAP = self.settings['PIPE_GAP']
@@ -272,26 +306,46 @@ class World:
             i += 1
             
     def step_pipes(self):
+        """
+        Mueve a todas las tuberías una unidad de tiempo.
+
+        Salida
+        ------
+        passed_pipe : bool
+            Si una tubería se salió de los límites del mundo y fue reemplazada.
+            Esto es equivalente a que los pájaros que siguen vivos lograron pasarla.
+        """
         BIRD_RADIUS = self.settings['BIRD_RADIUS']
         PIPE_WIDTH = self.settings['PIPE_WIDTH']
         RIGHT = self.settings['RIGHT']
         
-        passed_pipe = False
-        if not self.alive:
-            return [0]*len(self.birds)
+        passed_pipe = False # si los pájaros lograron pasar una tubería
         for i,p in enumerate(self.pipes):
             p.step()
-            if p.x + PIPE_WIDTH + BIRD_RADIUS < 0:
-                self.pipes.pop(i)
-                self.pipes.append(Pipe(RIGHT, self.settings))
-                passed_pipe = True
+            if p.x + PIPE_WIDTH + BIRD_RADIUS < 0: # si la tubería se sale de los límites del mundo
+                self.pipes.pop(i)                  # la quitamos de la lista de tuberías
+                self.pipes.append(Pipe(RIGHT, self.settings)) # y creamos una nueva
+                passed_pipe = True                 # lograron librar una tubería
         return passed_pipe
     
     def step_birds(self):
+        """
+        Mueve todos los pájaros una unidad de tiempo.
+
+        Notas
+        -----
+        Se llama el método `.step` para todos los pájaros, el cual requiere como
+        entrada la ubicación de la tubería más cercana. Por construcción, dicha
+        tubería siempre es la primera entrada de la lista `self.pipes`, por lo
+        cual pasamos este atributo.
+        """
         for b in self.birds:
             b.step(self.pipes[0])
         
     def step(self):
+        """
+        Mueve todos los objetos una unidad de tiempo, y revisa colisiones.
+        """
         ALIVE_REWARD = self.settings['ALIVE_REWARD']
         PIPE_REWARD = self.settings['PIPE_REWARD']
         MAX_STEPS = self.settings['MAX_STEPS']
@@ -308,9 +362,28 @@ class World:
             b.fitness += b.alive*(ALIVE_REWARD + passed_pipe*PIPE_REWARD)
                 
     def fitness(self):
+        """
+        Calcula el fitness de todos los pájaros en el mundo
+
+        Salida
+        ------
+        fit : list
+            Lista con el fitness de cada pájaro.
+        """
         return [b.fitness for b in self.birds]
         
     def plot(self, ax, draw_dead=False):
+        """
+        Dibuja el mundo sobre los ejes dados.
+        
+        Parámetros
+        ----------
+        ax : matplotlib.axes
+            Ejes sobre los cuales dibujar.
+
+        draw_dead : bool = False
+            Si dibujar los pájaros muertos
+        """
         for p in self.pipes:
             p.plot(ax)
         if len(self.birds) == 2:
@@ -321,6 +394,20 @@ class World:
                 b.plot(ax, draw_dead=draw_dead)
 
     def play(self, draw=False, path="./", max_steps=None):
+        """
+        Ejecuta el mundo y opcionalmente grafica los resultados.
+
+        Parámetros
+        ----------
+        draw : bool = False
+            Si dibujar cada cuadro de la ejecución.
+
+        path : str = './'
+            Ubicación donde guardar los cuadros en caso de que `draw=True`.
+
+        max_steps : int = None
+            Máximo número de pasos a ejecutar.
+        """
         MAX_STEPS = self.settings['MAX_STEPS']
         RIGHT = self.settings['RIGHT']
         TOP = self.settings['TOP']

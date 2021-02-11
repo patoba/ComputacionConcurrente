@@ -1,3 +1,8 @@
+"""
+Este archivo implementa clases para definir redes neuronales, y sus operaciones
+relacionadas.
+"""
+
 import numpy as np
 from functools import reduce
 import random
@@ -193,12 +198,28 @@ class NeuralNet:
         Salida
         ------
         encoded : numpy.array
-            Vector de tamaño 
+            Vector unidimensional obtenido al concatenar el cromosoma codificado
+            de cada capa, en orden entrada -> salida. Véase `Layer.encode` para
+            más detalles
         """
         layers = [l.encode() for l in self.layers]
         return np.concatenate(layers)
     
     def decode(self, sequence):
+        """
+        Decodifica el vector codificado de una red neuronal.
+
+        Parámetros
+        ----------
+        sequence : list-like
+            Vector a decodificar. Debe tener dimensión `l1 + l2 + ... + ln`, donde
+            `li` es el tamaño de la i-ésima capa de la red.
+
+        Salida
+        ------
+        decoded : NeuralNet
+            Red neuronal con las capas detalladas en el vector codificado.
+        """
         seq = iter(sequence)
         sizes = [len(l) for l in self.layers]
         layers_enc = [np.array(list(islice(seq, i))) for i in sizes]

@@ -1,3 +1,8 @@
+"""
+Este archivo contiene utilidades para entrenar muchas generaciones de pájaros
+de una manera concurrente
+"""
+
 import neural_network as nn
 import bird as fb
 import genetic_algorithm as ga
