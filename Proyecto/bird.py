@@ -53,6 +53,14 @@ def intersects(center, radius,
 class Bird:
     """
     Clase que representa un pájaro.
+
+    Parámetros
+    ----------
+    network : NeuralNet
+        Red neuronal que utilizará el pájaro.
+
+    settings : dict
+        Diccionario con las configuraciones del pájaro.
     
     Atributos
     ---------
@@ -131,10 +139,21 @@ class Bird:
             self.y = self.TOP
     
     def step(self, pipe):
+        """
+        Avanza el pájaro una unidad de tiempo, decidiendo si aletear o no.
+        """
         choice = self.network([pipe.x, self.y-pipe.y])
         self.move(choice)
                 
     def plot(self, ax, draw_dead=False, color=None):
+        """
+        Grafica el pájaro sobre los ejes dados.
+
+        Parámetros
+        ----------
+        ax : matplotlib.axes
+            Objeto de ejes sobre el cual graficar.
+        """
         if not self.alive and not draw_dead:
             return
         c = Circle((0, self.y), self.BIRD_RADIUS, color=color)
@@ -144,13 +163,39 @@ class Bird:
 class Pipe:
     """
     Clase que representa una tubería.
+
+    Parámetros
+    ----------
+    x : float
+        Posición horizontal donde posicionar la tubería.
+
+    settings : dict
+        Diccionario de configuración.
     
     Atributos
     ---------
     MINIMUM_HEIGHT: float
-        Altura mínima que pueden tener las tuberías.
+        Altura mínima que pueden tener la tubería.
         
-    PIPE_WIDTH : 
+    PIPE_WIDTH : float
+        Ancho de la tubería.
+
+    PIPE_GAP : float
+        Tamaño de la apertura entre las tuberías de arriba y abajo.
+
+    TOP : float
+        Tamaño vertical del mundo.
+
+    VX : float
+        Velocidad horizontal.
+
+    DT : float
+        Intervalo temporal.
+
+    x: float
+        Posición horizontal.
+
+    y : Posición vertical del centro de la apertura.
     """
     def __init__(self, x, settings):
         self.MINIMUM_HEIGHT = settings['MINIMUM_HEIGHT']
@@ -164,9 +209,20 @@ class Pipe:
         self.y = self.MINIMUM_HEIGHT  + random.random() * (self.TOP - 2*self.MINIMUM_HEIGHT)
         
     def step(self):
+        """
+        Desplaza la tubería una unidad de tiempo.
+        """
         self.x += self.VX * self.DT
         
     def plot(self, ax):
+        """
+        Grafica la tubería sobre los ejes dados.
+
+        Parámetros
+        ----------
+        ax : matplotlib.axes
+            Ejes sobre los cuales graficar
+        """
         r1 = Rectangle((self.x, 0), self.PIPE_WIDTH, self.y - self.PIPE_GAP/2)
         r2 = Rectangle((self.x, self.y + self.PIPE_GAP/2), self.PIPE_WIDTH, self.TOP)
         ax.add_patch(r1)
