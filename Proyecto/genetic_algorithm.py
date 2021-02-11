@@ -4,6 +4,20 @@ import random
 from operator import itemgetter
 
 def crossover(a, b, verbose=False):
+    """
+    Cruza dos redes neuronales y regresa los cromosomas resultantes:
+
+    Parámetros
+    ----------
+    a, b : NeuralNet
+        Redes neuronales a cruzar
+
+    Salida
+    ------
+    a_enc, b_enc : NeuralNet
+        Redes producto del crossover de un solo punto de  `a` y `b`. Están
+        codificadas para facilitar mutación.
+    """
     a_enc = a.encode()
     b_enc = b.encode()
 
@@ -21,6 +35,23 @@ def crossover(a, b, verbose=False):
 
 
 def roulette_selection(birds, to_breed):
+    """
+    Método de selección por ruleta.
+
+    Parámetros
+    ----------
+    birds : list
+        Lista de objetos `Bird` a seleccionar.
+
+    to_breed : int
+        Número de parejas a seleccionar.
+
+    Salida
+    ------
+        parents: list
+            Lista de listas de la forma [[a1,a2], [b1,b2], ...]. Cada sub-lista
+            representa un conjunto de padres.
+    """
     fitness = [b.fitness for b in birds]
     s = sum(fitness)
     if s == 0:
@@ -37,6 +68,27 @@ def roulette_selection(birds, to_breed):
 
 
 def tournament_selection(birds, to_breed, k):
+    """
+    Método de selección por torneo.
+
+    Parámetros
+    ----------
+    birds : list
+        Lista de objetos `Bird` a seleccionar.
+
+    to_breed : int
+        Número de parejas a seleccionar.
+
+    k : int
+        Número de participantes por torneo. Valores más grandes producen más
+        presión de selección.
+
+    Salida
+    ------
+        parents: list
+            Lista de listas de la forma [[a1,a2], [b1,b2], ...]. Cada sub-lista
+            representa un conjunto de padres.
+    """
     parents = [[None,None] for _ in range(to_breed)]
     for i in range(to_breed):
         contestants = np.random.choice(birds, k)
@@ -47,6 +99,25 @@ def tournament_selection(birds, to_breed, k):
     
     
 def breed_parents(birds, to_breed, selection='tournament', k=None):
+    """
+    Reproduce padres y produce una nueva generación.
+
+    Parámetros
+    ----------
+    birds : list
+        Lista de pájaros a seleccionar y reproducir
+
+    to_breed : int
+        Número de parejas a reproducir.
+
+    selection : str
+        Método de selección
+            - tournament: Selección por torneo.
+            - roulette : Selección por ruleta.
+    
+    k : int
+        Número de parejas a usar en el torneo. Sólo válido cuando `selection='tournament'`
+    """
     if selection == 'roulette':
         parents = roulette_selection(birds, to_breed)
     elif selection == 'tournament':
@@ -59,6 +130,23 @@ def breed_parents(birds, to_breed, selection='tournament', k=None):
     return children
         
 def new_generation(birds, settings):
+    """
+    Produce una nueva generación de pájaros.
+
+    Parámetros
+    ----------
+    birds : list
+        Lista de objetos `Bird` a seleccionar y reproducir.
+
+    settings : dict
+        Diccionario con parámetros de configuración.
+
+    Salida
+    ------
+    children : tuple
+        Tupla de la forma (e, h, n), donde e es una lista de pájaros élite,
+        h de los pájaros productos de crossover, y n de pájaros normales.        
+    """
 
     MUTATION = settings['MUTATION'] 
     CROSSOVER = settings['CROSSOVER']
